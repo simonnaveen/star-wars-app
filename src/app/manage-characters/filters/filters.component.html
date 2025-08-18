@@ -1,0 +1,44 @@
+<div class="filters">
+    <mat-form-field appearance="fill">
+      <mat-label>Film</mat-label>
+      <mat-select [(ngModel)]="selectedFilm" (selectionChange)="applyFilters()">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let film of films" [value]="film">{{ film }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field appearance="fill">
+      <mat-label>Species</mat-label>
+      <mat-select [(ngModel)]="selectedSpecies" (selectionChange)="applyFilters()">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let s of speciesList" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field appearance="fill">
+      <mat-label>Vehicle</mat-label>
+      <mat-select [(ngModel)]="selectedVehicle" (selectionChange)="applyFilters()">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let v of vehicles" [value]="v">{{ v }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field appearance="fill">
+      <mat-label>Starship</mat-label>
+      <mat-select [(ngModel)]="selectedStarship" (selectionChange)="applyFilters()">
+        <mat-option value="">All</mat-option>
+        <mat-option *ngFor="let s of starships" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Birth Year</mat-label>
+        <mat-select [(ngModel)]="selectedBirthyear" (selectionChange)="applyFilters()">
+          <mat-option value="">All</mat-option>
+          <mat-option *ngFor="let b of birthyear" [value]="b">{{ b }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+    <button mat-raised-button color="warn" (click)="clearFilters()">Clear</button>
+  </div>
+  

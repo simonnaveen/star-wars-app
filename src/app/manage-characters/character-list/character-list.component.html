@@ -1,0 +1,63 @@
+<div class="character-container">
+    <!-- Filters (child component) -->
+    <app-filters
+      [films]="films"
+      [speciesList]="speciesList"
+      [vehicles]="vehicles"
+      [starships]="starships"
+      [birthyear]="birthyear"
+      (filtersChanged)="onFiltersChanged($event)">
+    </app-filters>
+  
+    <!-- Results Table -->
+    <div class="results">
+      <h3>SEARCH RESULTS</h3>
+      <p>(By default, this table will display all characters)</p>
+  
+      <table mat-table [dataSource]="displayedCharacters" class="mat-elevation-z2 full-width">
+        
+        <!-- SI No -->
+        <ng-container matColumnDef="si">
+          <th mat-header-cell *matHeaderCellDef>SI No.</th>
+          <td mat-cell *matCellDef="let element; let i = index">
+            {{ siNumber(i) }}
+          </td>
+        </ng-container>
+  
+        <!-- Character Name -->
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Character Name</th>
+            <td mat-cell *matCellDef="let element">
+              <a (click)="goToDetails(element)" style="cursor: pointer; text-decoration: underline; color: #1976d2;">
+                {{ element.name }}
+              </a>
+            </td>
+          </ng-container>
+          
+  
+        <!-- Species -->
+        <ng-container matColumnDef="species">
+          <th mat-header-cell *matHeaderCellDef>Species</th>
+          <td mat-cell *matCellDef="let element">{{ getSpeciesName(element) }}</td>
+        </ng-container>
+  
+        <!-- Birth Year -->
+        <ng-container matColumnDef="birth_year">
+          <th mat-header-cell *matHeaderCellDef>Birth Year</th>
+          <td mat-cell *matCellDef="let element">{{ element.birth_year }}</td>
+        </ng-container>
+  
+        <!-- Table Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+  
+      <!-- Pagination -->
+      <div class="pagination">
+        <button mat-mini-fab color="primary" (click)="prevPage()" [disabled]="page===1">‹</button>
+        <span>{{ page }}</span>
+        <button mat-mini-fab color="primary" (click)="nextPage()" [disabled]="!canGoNext">›</button>
+      </div>
+    </div>
+  </div>
+  

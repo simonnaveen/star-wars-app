@@ -1,0 +1,40 @@
+<div class="container" *ngIf="character">
+  <!-- Left Sidebar -->
+  <div class="sidebar">
+    <img src="https://via.placeholder.com/80" alt="Character" />
+    <p><strong>Name:</strong> {{ character.name }}</p>
+    <p><strong>Birth Year:</strong> {{ character.birth_year }}</p>
+    <p><strong>Gender:</strong> {{ character.gender }}</p>
+    <p><strong>Height:</strong> {{ character.height }} cm</p>
+    <p><strong>Mass:</strong> {{ character.mass }} kg</p>
+    <p><strong>Hair Color:</strong> {{ character.hair_color }}</p>
+    <p><strong>Eye Color:</strong> {{ character.eye_color }}</p>
+    <p><strong>Skin Color:</strong> {{ character.skin_color }}</p>
+    <p><strong>Homeworld:</strong> {{ character.homeworld }}</p>
+    <p><strong>Species:</strong> {{ character.species?.[0] || 'Human' }}</p>
+  </div>
+
+  <!-- Right Content -->
+  <div class="content">
+    <div class="section">
+      <h3>Films</h3>
+      <ul>
+        <li *ngFor="let film of character.films">{{ film }}</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Vehicles</h3>
+      <ul>
+        <li *ngFor="let vehicle of character.vehicles">{{ vehicle }}</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Starships</h3>
+      <ul>
+        <li *ngFor="let starship of character.starships">{{ starship }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
