@@ -34,10 +34,7 @@ export class CharacterListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.page = params['page'] ? +params['page'] : 1;
-      this.loadAllCharacters();
-    });
+    this.loadAllCharacters();
   }
 
   // Load characters
