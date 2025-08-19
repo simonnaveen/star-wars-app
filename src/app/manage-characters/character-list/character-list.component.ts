@@ -14,6 +14,7 @@ export class CharacterListComponent implements OnInit {
   displayedColumns: string[] = ['si', 'name', 'species', 'birth_year'];
   page = 1;
   pageSize = 10;
+  totalCount = 0;
 
   // filters
   films: string[] = [];
@@ -35,22 +36,48 @@ export class CharacterListComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.page = params['page'] ? +params['page'] : 1;
-      this.loadCharacters();
+      this.loadAllCharacters();
     });
   }
 
   // Load characters
-  loadCharacters(): void {
-    this.apiService.getCharacters(this.page).subscribe((data: any) => {
-      this.allCharacters = data.results;
-
-      // build filters dynamically from already fetched data
+  loadAllCharacters(): void {
+    const storedData = localStorage.getItem('allCharacters');
+  
+    if (storedData) {
+      // ✅ Already cached
+      this.allCharacters = JSON.parse(storedData);
+      this.totalCount = this.allCharacters.length;
       this.buildFilters();
-
-      // show initial data
       this.applyFilters();
+      return;
+    }
+  
+    // ✅ Fetch all pages dynamically
+    this.apiService.getCharacters(1).subscribe((firstPage: any) => {
+      const totalCount = firstPage.count;
+      const totalPages = Math.ceil(totalCount / this.pageSize);
+  
+      const requests = [];
+      for (let i = 1; i <= totalPages; i++) {
+        requests.push(this.apiService.getCharacters(i));
+      }
+  
+      forkJoin(requests).subscribe((responses: any[]) => {
+        this.allCharacters = responses.flatMap(r => r.results);
+        this.totalCount = this.allCharacters.length;
+  
+        // cache all characters
+        localStorage.setItem('allCharacters', JSON.stringify(this.allCharacters));
+  
+        this.buildFilters();
+        this.applyFilters();
+      });
     });
   }
+  
+  
+  
 
   // ✅ Build filters from character objects (not API calls)
   buildFilters(): void {
@@ -98,13 +125,13 @@ export class CharacterListComponent implements OnInit {
   // pagination
   nextPage(): void {
     this.page++;
-    this.loadCharacters();
+    this.loadAllCharacters();
   }
 
   prevPage(): void {
     if (this.page > 1) {
       this.page--;
-      this.loadCharacters();
+      this.loadAllCharacters();
     }
   }
 
@@ -128,6 +155,7 @@ export class CharacterListComponent implements OnInit {
   // Handle filter change
   onFiltersChanged(filters: any): void {
     this.activeFilters = filters;
+    this.page = 1;
     this.applyFilters();
   }
 
@@ -137,42 +165,50 @@ export class CharacterListComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.allCharacters];
-
+  
+    // ✅ Species filter
     if (this.activeFilters.species) {
       filtered = filtered.filter(c =>
         c.species.some((s: string) => this.extractId(s, 'species') === this.activeFilters.species)
       );
     }
-
+  
+    // ✅ Film filter
     if (this.activeFilters.film) {
       filtered = filtered.filter(c =>
         c.films.some((f: string) => this.extractId(f, 'films') === this.activeFilters.film)
       );
     }
-
+  
+    // ✅ Vehicle filter
     if (this.activeFilters.vehicle) {
       filtered = filtered.filter(c =>
         c.vehicles.some((v: string) => this.extractId(v, 'vehicles') === this.activeFilters.vehicle)
       );
     }
-
+  
+    // ✅ Starship filter
     if (this.activeFilters.starship) {
       filtered = filtered.filter(c =>
         c.starships.some((s: string) => this.extractId(s, 'starships') === this.activeFilters.starship)
       );
     }
-
+  
     // ✅ Birth year filter
     if (this.activeFilters.birthyear) {
       filtered = filtered.filter(c => c.birth_year === this.activeFilters.birthyear);
     }
-
-    
-    // Pagination
+  
+    // ✅ Pagination AFTER filtering
     const start = (this.page - 1) * this.pageSize;
-    this.canGoNext = filtered.length > start + this.pageSize;
     this.displayedCharacters = filtered.slice(start, start + this.pageSize);
+  
+    // ✅ Next page available?
+    this.canGoNext = this.page * this.pageSize < filtered.length;
   }
+  
+  
+  
 }
 
 

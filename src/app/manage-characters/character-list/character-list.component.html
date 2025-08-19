@@ -48,8 +48,16 @@
         </ng-container>
   
         <!-- Table Rows -->
+        <!-- Table Rows -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <!-- No Data Found Row -->
+        <tr class="mat-row no-data-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            🚫 No Data Found
+          </td>
+        </tr>
       </table>
   
       <!-- Pagination -->
